@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+
+require "bundler/setup"
+require "led_badge"
+require "thor"
+
+class CLI < Thor
+  
+  desc "set_message MESSAGE", "Set a single message"
+  def set_message(message)
+    badge = LedBadge::Badge.new
+    badge.set_message message
+  end
+  
+  desc "run_server", "Run REST server"
+  def run_server
+    LedBadge.run_server
+  end
+  
+end
+
+CLI .start
