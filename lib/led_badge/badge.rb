@@ -3,39 +3,41 @@ require 'json'
 
 module LedBadge
   class Badge
-    
+
+    SERIAL_DEVICE = File.exist('/dev/tty.usbserial') ? '/dev/tty.usbserial' : '/dev/ttyUSB0'
+
     SERIAL_PARAMS = {"stop_bits" => 1, "parity" => SerialPort::NONE, "baud" => 38400}
-    
-    def initialize(device_name = '/dev/tty.usbserial')
+
+    def initialize(device_name = SERIAL_DEVICE)
       @port = SerialPort.new(device_name, SERIAL_PARAMS)
     end
-    
+
     def set_message(message, opts = {})
 			payload = build_payload(message, opts)
   		packets = build_packets(0x06, payload)
   		send_packets(packets)
     end
-    
+
     def set_messages(message_array = [])
-  		packets = []
   		index = 1
   		address = 0x06
       num_messages = message_array.length
-  		message_array.each do |msg|
+  		packets = message_array.inject([]) do |acc,msg|
         msg = JSON.parse(JSON[msg], symbolize_names: true)
         next unless msg[:message] && msg[:message].length > 0
   			message = msg[:message]
   			opts = msg[:options] || {}
   			opts.merge!({msgindex: index})
   			payload = build_payload(message, opts)
-  			packets += build_packets(address, payload)
+  			acc += build_packets(address, payload)
   			address += 1
+        acc
   		end
   		send_packets(packets, num_messages)
     end
-    
+
     private
-    
+
     def build_payload(message, opts)
   		options = {
   	     speed: 5,
@@ -51,7 +53,7 @@ module LedBadge
   		msgFile += [0x00]*dif unless dif <= 0
   		msgFile
     end
-    
+
     def build_packets(address1,payload)
   		packets = Array.new
   		address2 = 0x00
@@ -61,7 +63,7 @@ module LedBadge
   		end
   		packets
     end
-    
+
     def send_packets(packets, num_messages=1)
   		initial = [0x00]
   		send_data(initial)
@@ -81,15 +83,15 @@ module LedBadge
   		last_byte = mapping[num_messages]
   		send_data([0x02,0x33,last_byte])
     end
-    
+
     def replace_special_charaters(message)
       map = LedBadge::SpecialCharacters::LIST.inject({}) {|acc,i| acc.merge!({":#{i}:" => Object.const_get("LedBadge::SpecialCharacters::#{i}")})}
       message.gsub(/:(#{LedBadge::SpecialCharacters::LIST.join('|')}):/, map)
     end
-    
+
     def send_data(data)
   		@port.write data.pack('C*')
     end
-    
+
   end
 end
