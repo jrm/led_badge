@@ -4,7 +4,7 @@ require 'json'
 module LedBadge
   class Badge
 
-    SERIAL_DEVICE = File.exist('/dev/tty.usbserial') ? '/dev/tty.usbserial' : '/dev/ttyUSB0'
+    SERIAL_DEVICE = File.exist?('/dev/tty.usbserial') ? '/dev/tty.usbserial' : '/dev/ttyUSB0'
 
     SERIAL_PARAMS = {"stop_bits" => 1, "parity" => SerialPort::NONE, "baud" => 38400}
 
