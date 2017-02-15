@@ -9,7 +9,7 @@ class CLI < Thor
   desc "set_message MESSAGE", "Set a single message"
   def set_message(message)
     badge = LedBadge::Badge.new
-    badge.set_message message
+    badge.set_message(message)
   end
 
   desc "run_server", "Run REST server"

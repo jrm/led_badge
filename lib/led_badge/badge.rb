@@ -42,8 +42,9 @@ module LedBadge
   		options = {
   	     speed: 5,
   	     msgindex: 1,
-  	     action: LedBadge::LedActions::SCROLL
+  	     action: "LedBadge::LedActions::SCROLL"
   	  }.merge(opts)
+      puts options.inspect
       action = options[:action].is_a?(String) ? Object.const_get("LedBadge::LedActions::#{options[:action]}") : options[:action]
   		msgFile = [options[:speed].to_s, options[:msgindex].to_s, action, message.length].pack("aaac").bytes.to_a
   		msgFile += replace_special_charaters(message).bytes.to_a
