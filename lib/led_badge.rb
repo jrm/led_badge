@@ -6,7 +6,7 @@ require "led_badge/server"
 
 
 module LedBadge
-  
+
   module LedActions
   	HOLD 	  = 'A'
   	SCROLL 	= 'B'
@@ -37,9 +37,9 @@ module LedBadge
     LIST     = %w(STAR HEART LEFT RIGHT PHONE1 PHONE2 SMILE CIRCLE TAIJI MUSIC QUESTION BOX)
 
   end
-  
-  def self.run_server
-    Server.run
+
+  def self.run_server(opts = {})
+    Server.run(opts)
   end
 
 end

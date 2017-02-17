@@ -4,15 +4,18 @@ require "haml"
 require "json"
 
 class Server < Sinatra::Base
-  
+
   use Rack::PostBodyContentTypeParser
-  
-  def self.run
+
+  def self.run(opts = {})
+    set :root, File.dirname(__FILE__)
+    set :bind, opts[:bind] || '0.0.0.0'
+    set :port, opts[:port] || '9292'
     run!
   end
-  
+
   helpers do
-    
+
     def characters
       [
         {character: ":STAR:", icon: "fa-star"},
@@ -26,16 +29,13 @@ class Server < Sinatra::Base
         {character: ":MUSIC:", icon: "fa-music"},
       ]
     end
-    
+
   end
-  
-  
-  set :root, File.dirname(__FILE__)
 
   get '/' do
     haml :index
   end
-  
+
   post '/' do
     badge = LedBadge::Badge.new
     if params[:messages]
@@ -44,10 +44,10 @@ class Server < Sinatra::Base
       badge.set_message "#{params[:message]}"
     end
   end
-  
+
   post '/reset' do
     badge = LedBadge::Badge.new
     badge.set_messages 6.times.map {|i| {message: " ", options: {speed: 1, action: "SCROLL"}} }
   end
-  
+
 end

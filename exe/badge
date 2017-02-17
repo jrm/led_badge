@@ -13,8 +13,10 @@ class CLI < Thor
   end
 
   desc "run_server", "Run REST server"
+  method_option :bind, :default: "0.0.0.0"
+  method_option :port, type: :numeric, default: 9292
   def run_server
-    LedBadge.run_server
+    LedBadge.run_server(options)
   end
 
 end
