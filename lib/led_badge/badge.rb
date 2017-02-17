@@ -24,7 +24,7 @@ module LedBadge
       num_messages = message_array.length
   		packets = message_array.inject([]) do |acc,msg|
         msg = JSON.parse(JSON[msg], symbolize_names: true)
-        next unless msg[:message] && msg[:message].length > 0
+        return acc unless msg[:message] && msg[:message].length > 0
   			message = msg[:message]
   			opts = msg[:options] || {}
   			opts.merge!({msgindex: index})
