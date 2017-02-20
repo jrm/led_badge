@@ -1,15 +1,21 @@
 require 'serialport'
 require 'json'
+require 'logger'
 
 module LedBadge
   class Badge
 
     SERIAL_DEVICE = File.exist?('/dev/tty.usbserial') ? '/dev/tty.usbserial' : '/dev/ttyUSB0'
-
     SERIAL_PARAMS = {"stop_bits" => 1, "parity" => SerialPort::NONE, "baud" => 38400}
 
-    def initialize(device_name = SERIAL_DEVICE)
-      @port = SerialPort.new(device_name, SERIAL_PARAMS)
+    def initialize(opts = {})
+      device_name = opts[:device_name] || SERIAL_DEVICE
+      serial_params = opts[:serial_params] || SERIAL_PARAMS
+      log_file = opts[:log_file]
+      debug = opts[:debug]
+      @port = SerialPort.new(device_name, serial_params)
+      @logger = Logger.new(log_file || $stdout)
+      @logger.level = debug ? Logger::DEBUG : Logger::INFO
     end
 
     def set_message(message, opts = {})
@@ -24,15 +30,20 @@ module LedBadge
       num_messages = message_array.length
   		packets = message_array.inject([]) do |acc,msg|
         msg = JSON.parse(JSON[msg], symbolize_names: true)
-        return acc unless msg[:message] && msg[:message].length > 0
-  			message = msg[:message]
-  			opts = msg[:options] || {}
-  			opts.merge!({msgindex: index})
-  			payload = build_payload(message, opts)
-  			acc += build_packets(address, payload)
-  			address += 1
-        acc
+        if msg[:message] && msg[:message].length > 0
+    			message = msg[:message]
+    			opts = msg[:options] || {}
+    			opts.merge!({msgindex: index})
+    			payload = build_payload(message, opts)
+    			acc += build_packets(address, payload)
+    			address += 1
+          acc
+        else
+          acc
+        end
   		end
+      @logger.debug message_array.inspect
+      @logger.debug packets.inspect
   		send_packets(packets, num_messages)
     end
 

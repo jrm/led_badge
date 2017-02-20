@@ -4,7 +4,6 @@ require "led_badge/packet"
 require "led_badge/badge"
 require "led_badge/server"
 
-
 module LedBadge
 
   module LedActions
@@ -33,9 +32,7 @@ module LedBadge
     MUSIC 	 = "\xc0\x14"
     QUESTION = "\xc0\x16"
     BOX      = "\xc0\x18"
-
     LIST     = %w(STAR HEART LEFT RIGHT PHONE1 PHONE2 SMILE CIRCLE TAIJI MUSIC QUESTION BOX)
-
   end
 
   def self.run_server(opts = {})

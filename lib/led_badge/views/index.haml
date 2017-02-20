@@ -3,40 +3,50 @@
     LED Badge Programmer
 %form#messages-form
   %table.table.table-bordered
-    %tr
-      %td{colspan: 3}
-        .btn-group
-          - characters.each do |c|
-            %button.btn.btn-default.character-button{data: {character: "#{c[:character]}" }}
-              %i.fa{class: c[:icon]}
-          
-    - 6.times do |i|    
+    %tbody
       %tr
-        %td #{i+1}
-        %td
-          .col-md-9
-            %input.form-control.message-input{name: "messages[][message]", id: "message-#{i}"}
-          .col-md-1
-            %select.form-control{name: "messages[][options][speed]", id: "speed-#{i}"}
-              %option Speed...
-              %option 1
-              %option 2
-              %option 3
-              %option 4
-              %option 5
-          .col-md-1
-            %select.form-control{name: "messages[][options][action]", id: "style-#{i}"}
-              %option SCROLL
-              %option HOLD
-              %option SNOW
-              %option FLASH
-              %option HOLDFRAME
-          .col-md-1
-            %button.btn.btn-danger.warning-button &times;
-          
-    %tr
-      %td{colspan: 3}
-        .btn-group.pull-right
-          %button.btn.btn-success#apply-button Apply
-          %button.btn.btn-warn#clear-button Clear
-          %button.btn.btn-danger#reset-button Reset
+        %td{colspan: 3}
+          .btn-group
+            - characters.each do |c|
+              %button.btn.btn-default.character-button{data: {character: "#{c[:character]}" }}
+                %i.fa{class: c[:icon]}
+          %a.btn.btn-primary{data: {toggle: "collapse", target: "#device-options"}} Options
+      %tr#device-options.collapse
+        %td.form-inline{colspan: 3}
+          USB Device Name:
+          %select.form-control{name: "device_options[device_name]"}
+            %option /dev/tty.usbserial
+            %option /dev/tty.ttyUSB0
+          Debug
+          %input.form-control{type: "checkbox", name: "device_options[debug]"}
+
+      - 6.times do |i|
+        %tr
+          %td #{i+1}
+          %td
+            .col-md-9
+              %input.form-control.message-input{name: "messages[][message]", id: "message-#{i}"}
+            .col-md-1
+              %select.form-control{name: "messages[][options][speed]", id: "speed-#{i}"}
+                %option Speed...
+                %option 1
+                %option 2
+                %option 3
+                %option 4
+                %option 5
+            .col-md-1
+              %select.form-control{name: "messages[][options][action]", id: "style-#{i}"}
+                %option SCROLL
+                %option HOLD
+                %option SNOW
+                %option FLASH
+                %option HOLDFRAME
+            .col-md-1
+              %button.btn.btn-danger.warning-button &times;
+
+      %tr
+        %td{colspan: 3}
+          .btn-group.pull-right
+            %button.btn.btn-success#apply-button Apply
+            %button.btn.btn-warn#clear-button Clear
+            %button.btn.btn-danger#reset-button Reset

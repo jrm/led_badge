@@ -11,6 +11,7 @@ class Server < Sinatra::Base
     set :root, File.dirname(__FILE__)
     set :bind, opts[:bind] || '0.0.0.0'
     set :port, opts[:port] || '9292'
+    set :debug, opts[:debug]
     run!
   end
 
@@ -37,7 +38,8 @@ class Server < Sinatra::Base
   end
 
   post '/' do
-    badge = LedBadge::Badge.new
+    puts params.inspect
+    badge = LedBadge::Badge.new(params[:device_options])
     if params[:messages]
       badge.set_messages params[:messages]
     else
